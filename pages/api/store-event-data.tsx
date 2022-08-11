@@ -36,7 +36,7 @@ async function makeFileObjects(body: any) {
 }
 
 function makeStorageClient() {
-  return new Web3Storage({ token: process.env.WEB3STORAGE_TOKEN })
+  return new Web3Storage({ token: process.env.WEB3STORAGE_TOKEN! })
 }
 
 async function storeFiles(files: any) {
