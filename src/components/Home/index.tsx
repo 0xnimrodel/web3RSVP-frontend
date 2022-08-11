@@ -1,34 +1,34 @@
 import Landing from '@components/UI/Landing'
 import { useState } from 'react'
 import { gql, useQuery } from '@apollo/client'
-import EventCard from '@components/UI/EventCard'
-import { Event } from 'src/types'
+// import EventCard from '@components/UI/EventCard'
+// import { Event } from 'src/types'
 import { UPCOMING_EVENTS } from '@utils/gql/queries'
 
 export default function Home() {
-  const [currentTimestamp, setEventTimestamp] = useState(
-    new Date().getTime().toString()
-  )
-  const { loading, error, data } = useQuery(UPCOMING_EVENTS, {
-    variables: { currentTimestamp },
-  })
+  // const [currentTimestamp, setEventTimestamp] = useState(
+  //   new Date().getTime().toString()
+  // )
+  // const { loading, error, data } = useQuery(UPCOMING_EVENTS, {
+  //   variables: { currentTimestamp },
+  // })
 
-  if (loading)
-    return (
-      <Landing>
-        <p>Loading...</p>
-      </Landing>
-    )
-  if (error)
-    return (
-      <Landing>
-        <p>Error! {error.message}</p>
-      </Landing>
-    )
+  // if (loading)
+  //   return (
+  //     <Landing>
+  //       <p>Loading...</p>
+  //     </Landing>
+  //   )
+  // if (error)
+  //   return (
+  //     <Landing>
+  //       <p>Error! {error.message}</p>
+  //     </Landing>
+  //   )
   return (
     <>
       <Landing>
-        <ul
+        {/* <ul
           role="list"
           className="grid grid-cols-2 gap-x-2 gap-y-4 sm:grid-cols-3 sm:gap-x-4 lg:grid-cols-4 xl:gap-x-6"
         >
@@ -43,7 +43,7 @@ export default function Home() {
                 />
               </li>
             ))}
-        </ul>
+        </ul> */}
       </Landing>
     </>
   )

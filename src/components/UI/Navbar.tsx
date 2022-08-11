@@ -18,6 +18,10 @@ export default function Navbar() {
 
   const menuItems = [
     {
+      label: 'All Events',
+      href: '/events',
+    },
+    {
       label: 'My Events',
       href: `/my-events/upcoming`,
     },

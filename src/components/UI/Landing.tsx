@@ -1,4 +1,4 @@
-import Head from "next/head";
+import Head from 'next/head'
 
 export default function Landing({ children }: { children: React.ReactNode }) {
   return (
@@ -10,8 +10,10 @@ export default function Landing({ children }: { children: React.ReactNode }) {
           content="Find, join, and create virtual events with your web3 frens"
         />
       </Head>
-      <section className="py-12">
-        <div className="w-full md:w-8/12 text-left">
+      <section className="py-12 flex h-screen-md items-center">
+        <div
+          className="w-full md:w-8/12 text-left"
+        >
           <h1 className="text-4xl tracking-tight font-extrabold text-gray-100 sm:text-5xl md:text-6xl">
             <span>Discover what&apos;s happening in the </span>
             <span className="text-sky-500">metaverse</span>
@@ -19,9 +21,11 @@ export default function Landing({ children }: { children: React.ReactNode }) {
           <p className="mt-3 text-base text-gray-300 sm:mt-5 sm:text-lg sm:max-w-xl sm:mx-auto md:mt-5 md:text-xl lg:mx-0">
             Find, join, and create virtual events with your web3 frens!
           </p>
+          <a href='/events'>Check Events</a>
+          <button>Create Event</button>
         </div>
       </section>
-      <section className="py-12">{children}</section>
+      {/* <section className="py-12">{children}</section> */}
     </div>
-  );
+  )
 }

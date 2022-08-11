@@ -28,3 +28,7 @@ input[type="number"]::-webkit-outer-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
+
+.h-screen-md {
+  height: 60vh;
+}
