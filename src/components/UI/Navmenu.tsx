@@ -1,6 +1,5 @@
 import { Fragment } from 'react'
 import { Menu, Transition } from '@headlessui/react'
-import joinClassNames from '@utils/joinClassNames'
 
 export default function Navmenu({
   account,

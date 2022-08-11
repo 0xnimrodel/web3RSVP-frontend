@@ -10,7 +10,7 @@ function connectContract() {
     const { ethereum } = window
 
     if (ethereum) {
-      const provider = new ethers.providers.Web3Provider(ethereum)
+      const provider = new ethers.providers.Web3Provider(ethereum as any)
       const signer = provider.getSigner()
       rsvpContract = new ethers.Contract(contractAddress, contractABI, signer)
     } else {
