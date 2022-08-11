@@ -2,6 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
+body {
+  @apply dark:bg-slate-900 dark:selection:bg-slate-200 dark:selection:text-slate-700
+}
+
 .clickable-card .clickable-card__link::after {
   content: "";
   position: absolute;
