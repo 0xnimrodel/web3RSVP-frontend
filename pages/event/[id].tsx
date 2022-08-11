@@ -120,13 +120,13 @@ function EventPage({ event } : { event: Event }) {
                   account ? (
                     checkIfAlreadyRSVPed() ? (
                       <>
-                        <span className="w-full text-center px-6 py-3 text-base font-medium rounded-full text-teal-800 bg-teal-100">
+                        <span className="w-full text-center px-6 py-3 text-base font-medium rounded-md text-sky-800 bg-sky-50">
                           You have RSVPed! 🙌
                         </span>
                         <div className="flex item-center">
-                          <LinkIcon className="w-6 mr-2 text-indigo-800" />
+                          <LinkIcon className="w-6 mr-2 text-sky-500" />
                           <a
-                            className="text-indigo-800 truncate hover:underline"
+                            className="text-sky-500 truncate hover:underline"
                             href={event.link}
                           >
                             {event.link}

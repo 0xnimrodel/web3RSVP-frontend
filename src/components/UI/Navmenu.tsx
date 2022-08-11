@@ -30,12 +30,12 @@ export default function Navmenu({
           <div className="py-1">
             <Menu.Item>
               {() => (
-                <button
+                <a
                   onClick={disconnect}
                   className="block px-4 py-2 text-sm dark:hover:bg-slate-700 text-gray-200 cursor-pointer"
                 >
                   Log Out
-                </button>
+                </a>
               )}
             </Menu.Item>
           </div>

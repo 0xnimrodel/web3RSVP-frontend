@@ -23,7 +23,7 @@ export default function Dashboard({
         <title>My Dashboard | web3rsvp</title>
         <meta name="description" content="Manage your events and RSVPs" />
       </Head>
-      <div className="flex flex-wrap py-8">
+      <div className="flex flex-wrap py-8 justify-around">
         <DashboardNav
           alreadySelected=""
           page={page}

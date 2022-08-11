@@ -5,6 +5,7 @@ import { ConnectButton } from '@rainbow-me/rainbowkit'
 import { useAccount, useDisconnect } from 'wagmi'
 import { Popover, Transition } from '@headlessui/react'
 import { MenuIcon, XIcon } from '@heroicons/react/outline'
+import joinClassNames from '@utils/joinClassNames'
 
 export default function Navbar() {
   const [mounted, setMounted] = useState(false)
@@ -30,10 +31,15 @@ export default function Navbar() {
     <Popover className="relative z-10">
       <header className="bg-white dark:bg-transparent border-b-2 border-gray-100 dark:border-slate-800">
         <nav
-          className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"
+          className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex md:block items-center justify-between"
           aria-label="Top"
         >
-          <div className="w-full py-6 flex flex-wrap items-center justify-between border-b border-indigo-500 dark:border-none lg:border-none">
+          <div
+            className={joinClassNames(
+              'py-6 flex flex-wrap items-center justify-between border-b border-indigo-500 dark:border-none lg:border-none',
+              account ? 'w-full' : ''
+            )}
+          >
             <div className="flex items-center">
               <Link href="/">
                 <a>web3rsvp</a>
@@ -112,13 +118,12 @@ export default function Navbar() {
                           {label}
                         </a>
                       ))}
-                      <button
-                        className="w-full font-medium text-red-800 hover:text-bg-800"
-                        href="/"
-                        onClick={disconnect}
+                      <a
+                        className="w-full font-medium text-red-800 hover:text-bg-800 text-center"
+                        onClick={() => disconnect()}
                       >
                         Log Out
-                      </button>
+                      </a>
                     </div>
                   </div>
                 </div>
