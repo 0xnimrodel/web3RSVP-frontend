@@ -1,6 +1,5 @@
 import { Web3Storage, File, getFilesFromPath } from 'web3.storage'
 const { resolve } = require('path')
-import { useAppPersistStore } from '@store/app'
 
 export default async function handler(req: any, res: any) {
   if (req.method === 'POST') {
