@@ -10,7 +10,6 @@ import Alert from '@components/UI/Alert'
 import ChooseFile from './ChooseFile'
 import { storeData } from '@utils/web3-storage'
 import Image from 'next/image'
-import { Dialog, Transition  } from '@headlessui/react'
 
 export default function CreateEvent() {
   const { data: account } = useAccount()
