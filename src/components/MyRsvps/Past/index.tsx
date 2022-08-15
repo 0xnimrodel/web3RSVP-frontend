@@ -6,6 +6,8 @@ import EventCard from '@components/UI/EventCard'
 import { MY_PAST_RSVPS } from '@utils/gql/queries'
 import { RSVP } from 'src/types'
 import Dashboard from '@components/UI/Dashboard'
+import Notifications from '@components/UI/Notifications'
+import ConnectMessage from '@components/UI/ConnectMessage'
 
 export default function MyPastRSVPs() {
   const { data: account } = useAccount()
@@ -17,19 +19,9 @@ export default function MyPastRSVPs() {
 
   const page = 'my-rsvps'
 
-  if (loading)
-    return (
-      <Dashboard page={page}>
-        <p className="sm:w-10/12 sm:pl-8">Loading...</p>
-      </Dashboard>
-    )
-  if (error)
-    return (
-      <Dashboard page={page}>
-        <p className="sm:w-10/12 sm:pl-8">Error! {error.message}</p>
-      </Dashboard>
-    )
-  if (data) console.log(data)
+  if (loading || error) {
+    return <Notifications error={error} loading={loading} page={page} />
+  }
 
   return (
     <Dashboard page={page}>
@@ -38,10 +30,7 @@ export default function MyPastRSVPs() {
           <div>
             {data && !data.account && <p>No past RSVPs found</p>}
             {data && data.account && (
-              <ul
-                role="list"
-                className="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 sm:gap-x-6 lg:grid-cols-4 xl:gap-x-8"
-              >
+              <ul role="list" className="event-list">
                 {data.account.rsvps.map(function (rsvp: RSVP, idx: number) {
                   if (rsvp.event.eventTimestamp < currentTimestamp) {
                     return (
@@ -60,12 +49,7 @@ export default function MyPastRSVPs() {
             )}
           </div>
         ) : (
-          <div className="flex flex-col items-center py-8">
-            <p className="mb-4">
-              Please connect your wallet to view your rsvps
-            </p>
-            <ConnectButton />
-          </div>
+          <ConnectMessage page={'rsvps'} />
         )}
       </div>
     </Dashboard>

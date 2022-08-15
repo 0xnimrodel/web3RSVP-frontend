@@ -83,7 +83,6 @@ const customTheme = {
 
 export default function MyApp({ Component, pageProps }: any) {
   
-  
   return (
     <ThemeProvider attribute="class">
       <ApolloProvider client={client}>

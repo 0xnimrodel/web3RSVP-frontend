@@ -15,6 +15,8 @@
     "@heroicons/react": "^1.0.5",
     "@rainbow-me/rainbowkit": "^0.2.2",
     "ethers": "^5.6.6",
+    "formidable": "^2.0.1",
+    "formidable-serverless": "^1.1.1",
     "graphql": "^16.5.0",
     "next": "12.0.7",
     "next-themes": "^0.2.0",
@@ -26,6 +28,7 @@
   "devDependencies": {
     "@tailwindcss/aspect-ratio": "^0.4.0",
     "@tailwindcss/forms": "^0.5.1",
+    "@types/formidable": "^2.0.5",
     "@types/react": "^18.0.1",
     "autoprefixer": "^10.4.0",
     "eslint": "8.4.1",

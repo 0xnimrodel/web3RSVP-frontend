@@ -1,13 +1,14 @@
-import { Web3Storage, File, getFilesFromPath } from "web3.storage"
-const { resolve } = require("path")
+import { Web3Storage, File, getFilesFromPath } from 'web3.storage'
+const { resolve } = require('path')
+import { useAppPersistStore } from '@store/app'
 
 export default async function handler(req: any, res: any) {
-  if (req.method === "POST") {
+  if (req.method === 'POST') {
     return await storeEventData(req, res)
   } else {
     return res
       .status(405)
-      .json({ message: "Method not allowed", success: false })
+      .json({ message: 'Method not allowed', success: false })
   }
 }
 
@@ -21,17 +22,20 @@ async function storeEventData(req: any, res: any) {
     console.log('storeEventData error', error)
     return res
       .status(500)
-      .json({ error: "Error creating event", success: false })
+      .json({ error: 'Error creating event', success: false })
   }
 }
 
 async function makeFileObjects(body: any) {
+  const image = body.image
   const buffer = Buffer.from(JSON.stringify(body))
 
-  const imageDirectory = resolve(process.cwd(), `public/images/${body.image}`)
-  const files = await getFilesFromPath(imageDirectory)
+  // const imageDirectory = resolve(process.cwd(), `public/images/${body.image}`)
+  // const files = await getFilesFromPath(imageDirectory)
 
-  files.push(new File([buffer], "data.json"))
+  // files.push(new File([buffer], "data.json"))
+  const files = [new File([buffer], 'data.json'), image]
+
   return files
 }
 

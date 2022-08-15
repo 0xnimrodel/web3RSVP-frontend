@@ -16,20 +16,19 @@ export default function Events() {
     variables: { currentTimestamp },
   })
 
-  if (loading)
+  if (loading || error) {
     return (
-      <Landing>
-        <p>Loading...</p>
-      </Landing>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <section className="py-12 h-screen-md">
+          {loading && <p>Loading...</p>}
+          {error && <p>Error! {error.message}</p>}
+        </section>
+      </div>
     )
-  if (error)
-    return (
-      <Landing>
-        <p>Error! {error.message}</p>
-      </Landing>
-    )
+  }
+
   return (
-    <div className='p-12 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex md:block items-center justify-between'>
+    <div className="p-12 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex md:block items-center justify-between">
       {/* <SearchBar /> */}
       <ul
         role="list"

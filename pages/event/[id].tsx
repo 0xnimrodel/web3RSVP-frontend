@@ -24,7 +24,7 @@ function EventPage({ event } : { event: Event }) {
   const [message, setMessage] = useState<string>()
   const [loading, setLoading] = useState<boolean>()
   const [currentTimestamp, setEventTimestamp] = useState(new Date().getTime())
-  // console.log('event', event)
+  console.log('event', event)
 
   function checkIfAlreadyRSVPed() {
     if (account) {
@@ -69,7 +69,7 @@ function EventPage({ event } : { event: Event }) {
       {event && (
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <Head>
-            <title>name | web3rsvp</title>
+            <title>{event.name} | web3rsvp</title>
             <meta name="description" content={event.name} />
             <link rel="icon" href="/favicon.ico" />
           </Head>

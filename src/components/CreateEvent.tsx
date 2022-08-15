@@ -1,4 +1,4 @@
-import { useState, useEffect, ChangeEvent } from 'react'
+import { useState, useEffect, ChangeEvent, Fragment } from 'react'
 import Head from 'next/head'
 import Link from 'next/link'
 import getRandomImage from '@utils/getRandomImage'
@@ -8,7 +8,9 @@ import { ConnectButton } from '@rainbow-me/rainbowkit'
 import { useAccount } from 'wagmi'
 import Alert from '@components/UI/Alert'
 import ChooseFile from './ChooseFile'
+import { storeData } from '@utils/web3-storage'
 import Image from 'next/image'
+import { Dialog, Transition  } from '@headlessui/react'
 
 export default function CreateEvent() {
   const { data: account } = useAccount()
@@ -26,19 +28,21 @@ export default function CreateEvent() {
   const [eventLink, setEventLink] = useState('')
   const [eventDescription, setEventDescription] = useState('')
   const [uploading, setUploading] = useState<boolean>(false)
-  const [picture, setPicture] = useState<string>()
+  const [showImgLarger, setShowImgLarger] = useState<boolean>(false)
+  const [image, setImage] = useState<ImageSrc>()
 
-  const handleUpload = async (evt: ChangeEvent<HTMLInputElement>) => {
-    evt.preventDefault()
-    console.log(evt.target.files)
-    const filesList = evt.target.files
-    setUploading(true)
-    try {
-      if (filesList && filesList.length > 0) {
-        setPicture(URL.createObjectURL(filesList[0]))
-      }
-    } finally {
-      setUploading(false)
+  type ImageSrc = {
+    file: File
+    url: string
+  }
+
+  const handleUpload = async (e: ChangeEvent<HTMLInputElement>) => {
+    e.preventDefault()
+
+    if (e.target.files && e.target.files.length > 0) {
+      const file = e.target.files[0]
+      console.log('file', file)
+      setImage({ file, url: URL.createObjectURL(file) })
     }
   }
 
@@ -51,23 +55,15 @@ export default function CreateEvent() {
       name: eventName,
       description: eventDescription,
       link: eventLink,
-      // image: picture ? picture : getRandomImage(),
-      image: getRandomImage(),
+      image: `/${image?.file.name}`,
     }
     console.log(body)
     try {
-      const response = await fetch('/api/store-event-data', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body),
-      })
-
-      if (response.status !== 200) {
-        alert('Something went wrong. Please try again later.')
+      const cid = await storeData(body, image?.file)
+      if (cid) {
+        await createEvent(cid)
       } else {
-        console.log('Form submitted')
-        let responseJSON = await response.json()
-        await createEvent(responseJSON.cid)
+        alert('Something went wrong. Please try again later.')
       }
     } catch (error) {
       alert(`Something went wrong. Please try again later. Error: ${error}`)
@@ -112,6 +108,8 @@ export default function CreateEvent() {
       setLoading(false)
     }
   }
+
+  const enlargeImage = (image: string) => {}
 
   // useEffect(() => {
   //   // disable scroll on <input> elements of type number
@@ -169,11 +167,8 @@ export default function CreateEvent() {
             className="space-y-8 divide-y divide-gray-200"
           >
             <div className="space-y-6 sm:space-y-5">
-              <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:pt-5">
-                <label
-                  htmlFor="eventname"
-                  className="block text-sm font-medium text-gray-400 sm:mt-px sm:pt-2"
-                >
+              <div className="form-item-container">
+                <label htmlFor="eventname" className="form-label">
                   Event name
                 </label>
                 <div className="mt-1 sm:mt-0 sm:col-span-2">
@@ -181,7 +176,7 @@ export default function CreateEvent() {
                     id="event-name"
                     name="event-name"
                     type="text"
-                    className="block dark:text-gray-200 bg-slate-800 max-w-lg w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 dark:focus:ring-sky-500 dark:focus:border-sky-500 sm:text-sm border border-slate-700 rounded-md"
+                    className="form-input"
                     required
                     value={eventName}
                     onChange={(e) => setEventName(e.target.value)}
@@ -189,11 +184,8 @@ export default function CreateEvent() {
                 </div>
               </div>
 
-              <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:pt-5">
-                <label
-                  htmlFor="date"
-                  className="block text-sm font-medium text-gray-400 sm:mt-px sm:pt-2"
-                >
+              <div className="form-item-container">
+                <label htmlFor="date" className="form-label">
                   Date & time
                   <p className="mt-1 max-w-2xl text-sm text-gray-200">
                     Your event date and time
@@ -205,7 +197,7 @@ export default function CreateEvent() {
                       id="date"
                       name="date"
                       type="date"
-                      className="max-w-lg dark:text-gray-200 block bg-slate-800  focus:ring-indigo-500 focus:border-indigo-500 dark:focus:ring-sky-500 dark:focus:border-sky-500 w-full shadow-sm sm:max-w-xs sm:text-sm border border-slate-700 rounded-md"
+                      className="form-input"
                       required
                       value={eventDate}
                       onChange={(e) => setEventDate(e.target.value)}
@@ -217,7 +209,7 @@ export default function CreateEvent() {
                       id="time"
                       name="time"
                       type="time"
-                      className="max-w-lg dark:text-gray-200 block bg-slate-800  focus:ring-indigo-500 focus:border-indigo-500 dark:focus:ring-sky-500 dark:focus:border-sky-500 w-full shadow-sm sm:max-w-xs sm:text-sm border border-slate-700 rounded-md "
+                      className="form-input"
                       required
                       value={eventTime}
                       onChange={(e) => setEventTime(e.target.value)}
@@ -226,11 +218,8 @@ export default function CreateEvent() {
                 </div>
               </div>
 
-              <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:pt-5">
-                <label
-                  htmlFor="max-capacity"
-                  className="block text-sm font-medium text-gray-400 sm:mt-px sm:pt-2"
-                >
+              <div className="form-item-container">
+                <label htmlFor="max-capacity" className="form-label">
                   Max capacity
                   <p className="mt-1 max-w-2xl text-sm text-gray-200">
                     Limit the number of spots available for your event.
@@ -243,24 +232,21 @@ export default function CreateEvent() {
                     id="max-capacity"
                     min="1"
                     placeholder="100"
-                    className="max-w-lg dark:text-gray-200 bg-slate-800  block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 dark:focus:ring-sky-500 dark:focus:border-sky-500 sm:max-w-xs sm:text-sm border border-slate-700 rounded-md"
+                    className="form-input"
                     value={maxCapacity}
                     onChange={(e) => setMaxCapacity(e.target.value)}
                   />
                 </div>
               </div>
 
-              {/* <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:pt-5">
-                <label
-                  htmlFor="max-capacity"
-                  className="block text-sm font-medium text-gray-400 sm:mt-px sm:pt-2"
-                >
+              <div className="form-item-container">
+                <label htmlFor="max-capacity" className="form-label">
                   Event Image
                   <p className="mt-1 max-w-2xl text-sm text-gray-200">
                     An image for your event
                   </p>
                 </label>
-                <div className="mt-1 sm:mt-0 ">
+                <div className="mt-1 sm:mt-0 sm:col-span-2">
                   <div className="flex items-center space-x-3">
                     <ChooseFile
                       onChange={(evt: ChangeEvent<HTMLInputElement>) =>
@@ -275,25 +261,25 @@ export default function CreateEvent() {
                       />
                     )}
                   </div>
-                  {picture && (
-                    <div className="h-36 mt-4 relative flex border-2">
+                  {image && (
+                    <div className="h-36 mt-4 relative form-input">
                       <Image
-                        src={picture}
+                        // onClick={() => {
+                        //   setShowImgLarger(true)
+                        // }}
+                        src={image.url}
                         layout="fill"
                         objectFit="contain"
-                        className="shadow-md border-4 rounded-md overflow-hidden m-auto"
+                        className="shadow-md border-4 rounded-md overflow-hidden m-auto hover:cursor-zoom-in"
                         alt="image of the event"
                       />
                     </div>
                   )}
                 </div>
-              </div> */}
+              </div>
 
-              <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:pt-5">
-                <label
-                  htmlFor="refundable-deposit"
-                  className="block text-sm font-medium text-gray-400 sm:mt-px sm:pt-2"
-                >
+              <div className="form-item-container">
+                <label htmlFor="refundable-deposit" className="form-label">
                   Refundable deposit
                   <p className="mt-1 max-w-2xl text-sm text-gray-200">
                     Require a refundable deposit (in MATIC) to reserve one spot
@@ -309,18 +295,15 @@ export default function CreateEvent() {
                     step="any"
                     inputMode="decimal"
                     placeholder="0.00"
-                    className="max-w-lg dark:text-gray-200 bg-slate-800 block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 dark:focus:ring-sky-500 dark:focus:border-sky-500 sm:max-w-xs sm:text-sm border border-slate-700 rounded-md"
+                    className="form-input"
                     value={refund}
                     onChange={(e) => setRefund(e.target.value)}
                   />
                 </div>
               </div>
 
-              <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:pt-5">
-                <label
-                  htmlFor="event-link"
-                  className="block text-sm font-medium text-gray-400 sm:mt-px sm:pt-2"
-                >
+              <div className="form-item-container">
+                <label htmlFor="event-link" className="form-label">
                   Event link
                   <p className="mt-1 max-w-2xl text-sm text-gray-200">
                     The link for your virtual event
@@ -331,18 +314,15 @@ export default function CreateEvent() {
                     id="event-link"
                     name="event-link"
                     type="text"
-                    className="max-w-lg dark:text-gray-200 bg-slate-800 block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 dark:focus:ring-sky-500 dark:focus:border-sky-500 sm:text-sm border border-slate-700 rounded-md"
+                    className="form-input"
                     required
                     value={eventLink}
                     onChange={(e) => setEventLink(e.target.value)}
                   />
                 </div>
               </div>
-              <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:pt-5">
-                <label
-                  htmlFor="about"
-                  className="block text-sm font-medium text-gray-400 sm:mt-px sm:pt-2"
-                >
+              <div className="form-item-container">
+                <label htmlFor="about" className="form-label">
                   Event description
                   <p className="mt-2 text-sm text-gray-200">
                     Let people know what your event is about!
@@ -353,7 +333,7 @@ export default function CreateEvent() {
                     id="about"
                     name="about"
                     rows={10}
-                    className="max-w-lg dark:text-gray-200 bg-slate-800  shadow-sm block w-full focus:ring-indigo-500 focus:border-indigo-500 dark:focus:ring-sky-500 dark:focus:border-sky-500 sm:text-sm border border-slate-700 rounded-md"
+                    className="form-input"
                     value={eventDescription}
                     onChange={(e) => setEventDescription(e.target.value)}
                   />
@@ -391,6 +371,43 @@ export default function CreateEvent() {
             <ConnectButton />
           </section>
         )}
+
+        {/* {showImgLarger && (
+          <Transition
+            show={showImgLarger}
+            enter="transition duration-100 ease-out"
+            enterFrom="transform scale-95 opacity-0"
+            enterTo="transform scale-100 opacity-100"
+            leave="transition duration-75 ease-out"
+            leaveFrom="transform scale-100 opacity-100"
+            leaveTo="transform scale-95 opacity-0"
+            as={Fragment}
+          >
+            <Dialog
+              className="relative z-50"
+              open={showImgLarger}
+              onClose={() => setShowImgLarger(false)}
+            >
+              <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
+              <div className="fixed inset-0 flex items-center justify-center p-4">
+                <div className="flex min-h-full items-center justify-center">
+                  <Dialog.Panel className="w-full max-w-sm rounded bg-white p-4">
+                    <Image
+                      onClick={() => {
+                        setShowImgLarger(true)
+                      }}
+                      src={image?.url!}
+                      layout="fill"
+                      objectFit="contain"
+                      className="shadow-md border-4 rounded-md overflow-hidden hover:cursor-zoom-in m-4"
+                      alt="image of the event"
+                    />
+                  </Dialog.Panel>
+                </div>
+              </div>
+            </Dialog>
+          </Transition>
+        )} */}
       </section>
     </div>
   )
